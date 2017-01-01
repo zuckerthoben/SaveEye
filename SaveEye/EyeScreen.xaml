@@ -1,0 +1,27 @@
+﻿<Window x:Class="SaveEye.EyeScreen"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:p="clr-namespace:SaveEye.Properties"
+        Title="EyeScreen" Height="900" Width="900" WindowStartupLocation="Manual" AllowsTransparency="True" WindowStyle="None" Icon="Resources/iconSmall.ico">
+    <Grid Name="_MainGrid" SnapsToDevicePixels="True" ForceCursor="True">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock x:Name="_LookAwayTextBlock" HorizontalAlignment="Center" Margin="0,100" FontSize="40" FontFamily="Segoe UI" Foreground="Black">
+            Möglichst weit in die Ferne schauen und Blinzeln nicht vergessen.
+        </TextBlock>
+
+
+        <TextBlock x:Name="_AutoCloseTextBlock" HorizontalAlignment="Center" Margin="0,150" FontSize="40" FontFamily="Segoe UI" Foreground="Black">
+            Dieses Fenster schließt sich in 30 Sekunden selbst.
+        </TextBlock>
+
+        <Button x:Name="_CloseButton" Content=" Vorzeitig schließen" FontSize="20" FontFamily="Segoe UI" VerticalAlignment="Bottom" Height="75" Margin="200" Background="White"  Click="_CloseButton_Click"/>
+
+    </Grid>
+</Window>
