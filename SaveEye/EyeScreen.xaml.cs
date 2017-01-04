@@ -14,12 +14,12 @@ namespace SaveEye
     /// </summary>
     public partial class EyeScreen : Window
     {
-        private DispatcherTimer _LookAwayTimer; // Timer for the time you should look away from your screen
-        private DispatcherTimer _KeepAliveTimer; // Keeps the EyeScreen in Front
+        private DispatcherTimer LookAwayTimer; // Timer for the time you should look away from your screen
+        private DispatcherTimer KeepAliveTimer; // Keeps the EyeScreen in Front
 
-        public event EventHandler<RaiseToolTipEventArgs> _RaiseToolTip;
-        public Screen _ParentScreen { get; set; }
-        public Color _BackgroundColor { get; set; }
+        public event EventHandler<RaiseToolTipEventArgs> RaiseToolTipEventHandler;
+        public Screen ParentScreen { get; set; }
+        public Color BackgroundColor { get; set; }
         public static DependencyProperty _TextColorProperty = DependencyProperty.Register("_TextColor", typeof(SolidColorBrush), typeof(EyeScreen));
         private ResourceManager rm;
 
@@ -29,8 +29,7 @@ namespace SaveEye
         /// Constructor for EyeScreen-Objects
         /// </summary>
         public EyeScreen()
-        {
-           
+        {         
 
             this.InitializeComponent();
 
@@ -43,11 +42,11 @@ namespace SaveEye
 
         private void InitLocalization()
         {
-            rm = new ResourceManager("SaveEye.Properties.Resources", Assembly.GetExecutingAssembly());
+            this.rm = new ResourceManager("SaveEye.Properties.Resources", Assembly.GetExecutingAssembly());
 
-            _LookAwayTextBlock.Text = rm.GetString("LookAway");
-            _AutoCloseTextBlock.Text = rm.GetString("AutoClose");
-            _CloseButton.Content = rm.GetString("EarlyClose");
+            this._LookAwayTextBlock.Text = this.rm.GetString("LookAway");
+            this._AutoCloseTextBlock.Text = this.rm.GetString("AutoClose");
+            this._CloseButton.Content = this.rm.GetString("EarlyClose");
 
         }
 
@@ -59,10 +58,10 @@ namespace SaveEye
         /// <param name="textColor"></param>
         public EyeScreen(Screen parentScreen)
         {
-            rm = new ResourceManager("SaveEye.Properties.Resources", Assembly.GetExecutingAssembly());
+            this.rm = new ResourceManager("SaveEye.Properties.Resources", Assembly.GetExecutingAssembly());
 
             // The screen where the Window lives
-            this._ParentScreen = parentScreen;
+            this.ParentScreen = parentScreen;
 
             this.InitializeComponent();
             
@@ -75,43 +74,35 @@ namespace SaveEye
   
         #endregion
       
-        public SolidColorBrush _TextColor
+        public SolidColorBrush TextColor
         {
-            get
-            {
-                return (SolidColorBrush)this.GetValue(_TextColorProperty);
-            }
-            set
-            {
-                this.SetValue(_TextColorProperty, value);
-            }
+            get => (SolidColorBrush)this.GetValue(_TextColorProperty);
+            set => this.SetValue(_TextColorProperty, value);
         }
 
         private void InitKeepAliveTimer()
         {
-            this._KeepAliveTimer = new DispatcherTimer();
-            this._KeepAliveTimer.Tick += _KeepAliveTimer_Tick;
-            this._KeepAliveTimer.Interval = new TimeSpan(0,0,1);
-            this._KeepAliveTimer.IsEnabled = true;
+            this.KeepAliveTimer = new DispatcherTimer();
+            this.KeepAliveTimer.Tick += this.KeepAliveTimer_Tick;
+            this.KeepAliveTimer.Interval = new TimeSpan(0,0,1);
+            this.KeepAliveTimer.IsEnabled = true;
         }
 
-        void _KeepAliveTimer_Tick(object sender, EventArgs e)
-        {
+        void KeepAliveTimer_Tick(object sender, EventArgs e) => 
             this.Topmost = true;
-        }
 
-       
+
 
         /// <summary>
         /// 
         /// </summary>
         private void InitLookAwayTimer()
         {
-            this._LookAwayTimer = new DispatcherTimer();
-            this._LookAwayTimer.Tick += _LookAwayTimer_Tick;
+            this.LookAwayTimer = new DispatcherTimer();
+            this.LookAwayTimer.Tick += this.LookAwayTimer_Tick;
             
-            this._LookAwayTimer.Interval = new TimeSpan(0,0,30); // 30 Sek
-            this._LookAwayTimer.IsEnabled = true;
+            this.LookAwayTimer.Interval = new TimeSpan(0,0,30); // 30 Sek
+            this.LookAwayTimer.IsEnabled = true;
         }
 
         /// <summary>
@@ -119,21 +110,21 @@ namespace SaveEye
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void _LookAwayTimer_Tick(object sender, EventArgs e)
+        void LookAwayTimer_Tick(object sender, EventArgs e)
         {
-            if (this._RaiseToolTip != null)
+            if (this.RaiseToolTipEventHandler != null)
             {
                 // Has Subscriber(s)
-                if (this._ParentScreen == Screen.PrimaryScreen)
+                if (this.ParentScreen == Screen.PrimaryScreen)
                 {
                     // Raise only event, instead of one per screen
-                    this._LookAwayTimer.Interval = new TimeSpan(0, 20 , 0);
-                    this._RaiseToolTip(this, new RaiseToolTipEventArgs(rm.GetString("Closed") + Environment.NewLine + rm.GetString("NextExecution") + DateTime.Now.AddMinutes(20).ToShortTimeString(), 5));
+                    this.LookAwayTimer.Interval = new TimeSpan(0, 20 , 0);
+                    this.RaiseToolTipEventHandler(this, new RaiseToolTipEventArgs(this.rm.GetString("Closed") + Environment.NewLine + this.rm.GetString("NextExecution") + DateTime.Now.AddMinutes(20).ToShortTimeString(), 5));
                 }
             }
             
-            this._LookAwayTimer.Stop();
-            this._KeepAliveTimer.Stop();
+            this.LookAwayTimer.Stop();
+            this.KeepAliveTimer.Stop();
             this.Close();
         }
 
@@ -142,10 +133,10 @@ namespace SaveEye
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void _CloseButton_Click(object sender, RoutedEventArgs e)
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
-            this._LookAwayTimer.Stop();
-            this._KeepAliveTimer.Stop();
+            this.LookAwayTimer.Stop();
+            this.KeepAliveTimer.Stop();
             this.Close();
         }
     }

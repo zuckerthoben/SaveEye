@@ -8,13 +8,13 @@ namespace SaveEye.Events
 {
     public class RaiseToolTipEventArgs : EventArgs
     {
-        public string _Text { get; set; }
-        public int _DisplayDuration { get; set; }
+        public string Text { get; set; }
+        public int DisplayDuration { get; set; }
 
         public RaiseToolTipEventArgs(string text, int displayduration)
         {
-            this._Text = text;
-            this._DisplayDuration = displayduration;
+            this.Text = text;
+            this.DisplayDuration = displayduration;
         }
     }
 }

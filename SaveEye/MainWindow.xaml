@@ -18,8 +18,8 @@
 
         <TextBlock x:Name="_SettingsTextBlock" FontFamily="Segoe UI" FontSize="30" HorizontalAlignment="Center" Margin="5" Text="Settings"></TextBlock>
 
-        <CheckBox x:Name="_StartWithWindowsCheckBox" Content="Start with Windows" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Segoe UI" FontSize="14" Margin="10,0" Grid.Row="1" Checked="_StartWithWindowsCheckBox_Checked" Unchecked="_StartWithWindowsCheckBox_Unchecked"></CheckBox>
+        <CheckBox x:Name="_StartWithWindowsCheckBox" Content="Start with Windows" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Segoe UI" FontSize="14" Margin="10,0" Grid.Row="1" Checked="StartWithWindowsCheckBox_Checked" Unchecked="StartWithWindowsCheckBox_Unchecked"></CheckBox>
 
-        <Button x:Name="_SaveButton" Grid.Row="5" Grid.Column="1" Margin="20" FontSize="14" Click="_SaveButton_Click" Content="Save and close"></Button>
+        <Button x:Name="_SaveButton" Grid.Row="5" Grid.Column="1" Margin="20" FontSize="14" Click="SaveButton_Click" Content="Save and close"></Button>
     </Grid>
 </Window>

@@ -21,7 +21,7 @@
             Dieses Fenster schließt sich in 30 Sekunden selbst.
         </TextBlock>
 
-        <Button x:Name="_CloseButton" Content=" Vorzeitig schließen" FontSize="20" FontFamily="Segoe UI" VerticalAlignment="Bottom" Height="75" Margin="200" Background="White"  Click="_CloseButton_Click"/>
+        <Button x:Name="_CloseButton" Content=" Vorzeitig schließen" FontSize="20" FontFamily="Segoe UI" VerticalAlignment="Bottom" Height="75" Margin="200" Background="White"  Click="CloseButton_Click"/>
 
     </Grid>
 </Window>
