@@ -14,9 +14,7 @@ namespace SaveEye
     public partial class App : Application
     {
 
-        private void Application_Exit(object sender, ExitEventArgs e)
-        {
+        private void Application_Exit(object sender, ExitEventArgs e) => 
             SaveEye.Properties.Settings.Default.Save();
-        }
     }
 }

@@ -20,7 +20,7 @@ namespace SaveEye
         public event EventHandler<RaiseToolTipEventArgs> RaiseToolTipEventHandler;
         public Screen ParentScreen { get; set; }
         public Color BackgroundColor { get; set; }
-        public static DependencyProperty _TextColorProperty = DependencyProperty.Register("_TextColor", typeof(SolidColorBrush), typeof(EyeScreen));
+        private static DependencyProperty TextColorProperty = DependencyProperty.Register("_TextColor", typeof(SolidColorBrush), typeof(EyeScreen));
         private ResourceManager rm;
 
         #region CTOR
@@ -30,7 +30,6 @@ namespace SaveEye
         /// </summary>
         public EyeScreen()
         {         
-
             this.InitializeComponent();
 
             this.InitLookAwayTimer();
@@ -76,8 +75,8 @@ namespace SaveEye
       
         public SolidColorBrush TextColor
         {
-            get => (SolidColorBrush)this.GetValue(_TextColorProperty);
-            set => this.SetValue(_TextColorProperty, value);
+            get => (SolidColorBrush)this.GetValue(TextColorProperty);
+            set => this.SetValue(TextColorProperty, value);
         }
 
         private void InitKeepAliveTimer()

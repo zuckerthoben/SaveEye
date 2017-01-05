@@ -11,10 +11,10 @@ namespace SaveEye.Events
         public string Text { get; set; }
         public int DisplayDuration { get; set; }
 
-        public RaiseToolTipEventArgs(string text, int displayduration)
+        public RaiseToolTipEventArgs(string text, int displayDuration)
         {
             this.Text = text;
-            this.DisplayDuration = displayduration;
+            this.DisplayDuration = displayDuration;
         }
     }
 }

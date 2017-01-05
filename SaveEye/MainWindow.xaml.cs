@@ -1,8 +1,8 @@
 ﻿using System.Windows;
 using System.Windows.Forms;
 using System.Drawing;
-using System.Timers;
 using System;
+using System.ComponentModel;
 using Settings = SaveEye.Properties.Settings;
 using System.Windows.Threading;
 using Microsoft.Win32;
@@ -18,17 +18,17 @@ namespace SaveEye
     /// </summary>
     public partial class MainWindow : Window, IDisposable
     {
-        private NotifyIcon notifyIcon;
-        private Icon icon;
-        private string toolTip = "SaveEye";
-        private DispatcherTimer triggerTImer; // Timer for the time between each trigger
-        private EyeScreen eyeScreen;
-        private ResourceManager rm;
+        private NotifyIcon _notifyIcon;
+        private Icon _icon;
+        private string _toolTip = "SaveEye";
+        private DispatcherTimer _triggerTImer; // Timer for the time between each trigger
+        private EyeScreen _eyeScreen;
+        private ResourceManager _rm;
 
-        private MenuItem OpenMenuItem;
-        private MenuItem EyescreenMenuItem;
-        private MenuItem PauseMenuItem;
-        private MenuItem ExitMenuItem;
+        private MenuItem _openMenuItem;
+        private MenuItem _eyeScreenMenuItem;
+        private MenuItem _pauseMenuItem;
+        private MenuItem _exitMenuItem;
 
         //public string _Settings { get; set; }
         //public string Startup { get; set; }
@@ -54,7 +54,7 @@ namespace SaveEye
 
             this.LoadSettings();
 
-            this.icon = GetIconFromResource();
+            this._icon = GetIconFromResource();
 
             this.InitTimer();
             
@@ -89,11 +89,11 @@ namespace SaveEye
                 Thread.CurrentThread.CurrentUICulture = CultureInfo.CreateSpecificCulture("de-DE");
             }
 
-            this.rm = new ResourceManager("SaveEye.Properties.Resources", Assembly.GetExecutingAssembly());
+            this._rm = new ResourceManager("SaveEye.Properties.Resources", Assembly.GetExecutingAssembly());
 
-            this._SettingsTextBlock.Text = this.rm.GetString("Settings");
-            this._StartWithWindowsCheckBox.Content = this.rm.GetString("Startup");
-            this._SaveButton.Content = this.rm.GetString("SaveAndClose");
+            this._SettingsTextBlock.Text = this._rm.GetString("Settings");
+            this._StartWithWindowsCheckBox.Content = this._rm.GetString("Startup");
+            this._SaveButton.Content = this._rm.GetString("SaveAndClose");
         }
 
 
@@ -107,12 +107,12 @@ namespace SaveEye
         /// </summary>
         private void InitTimer()
         {
-            this.triggerTImer = new DispatcherTimer();
-            this.triggerTImer.Tick += this.TriggerTimer_Ticked;
-            this.triggerTImer.Interval = new TimeSpan(0,20,0); // 20 Minutes
-            this.triggerTImer.IsEnabled = true;
+            this._triggerTImer = new DispatcherTimer();
+            this._triggerTImer.Tick += this.TriggerTimer_Ticked;
+            this._triggerTImer.Interval = new TimeSpan(0,20,0); // 20 Minutes
+            this._triggerTImer.IsEnabled = true;
 
-            this.toolTip = "SaveEye" + Environment.NewLine + this.rm.GetString("NextExecution") + 
+            this._toolTip = "SaveEye" + Environment.NewLine + this._rm.GetString("NextExecution") + 
                 DateTime.Now.AddMinutes(20).ToShortTimeString();
         }
 
@@ -135,7 +135,7 @@ namespace SaveEye
             {
                 var r = item.Bounds;
 
-                this.eyeScreen = new EyeScreen(item)
+                this._eyeScreen = new EyeScreen(item)
                 {
                 Left = r.Left,
                 Top = r.Top,
@@ -145,10 +145,10 @@ namespace SaveEye
 
                 if (item == Screen.PrimaryScreen)
                 {
-                    this.eyeScreen.RaiseToolTipEventHandler += this.EyeScreen__RaiseToolTip;
+                    this._eyeScreen.RaiseToolTipEventHandler += this.EyeScreen__RaiseToolTip;
                 }
 
-                this.eyeScreen.Show();
+                this._eyeScreen.Show();
             }
         }
 
@@ -159,9 +159,9 @@ namespace SaveEye
         /// <param name="e"></param>
         void EyeScreen__RaiseToolTip(object sender, Events.RaiseToolTipEventArgs e)
         {
-            this.triggerTImer.Interval = new TimeSpan(0, 20, 0);
-            this.notifyIcon.ShowBalloonTip(e.DisplayDuration, "SaveEye", e.Text, ToolTipIcon.None);
-            this.notifyIcon.Text = "SaveEye" + Environment.NewLine + this.rm.GetString("NextExecution") + DateTime.Now.AddMinutes(20).ToShortTimeString();
+            this._triggerTImer.Interval = new TimeSpan(0, 20, 0);
+            this._notifyIcon.ShowBalloonTip(e.DisplayDuration, "SaveEye", e.Text, ToolTipIcon.None);
+            this._notifyIcon.Text = "SaveEye" + Environment.NewLine + this._rm.GetString("NextExecution") + DateTime.Now.AddMinutes(20).ToShortTimeString();
         }
       
         #region Tray
@@ -171,18 +171,18 @@ namespace SaveEye
         /// </summary>
         private void InitTray()
         {
-            this.notifyIcon = new NotifyIcon()
+            this._notifyIcon = new NotifyIcon()
             {
-                ContextMenu = new System.Windows.Forms.ContextMenu(),
-                ContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(),
-                Icon = this.icon,
-                Text = this.toolTip,
-                BalloonTipText = this.toolTip,
+                ContextMenu = new ContextMenu(),
+                ContextMenuStrip = new ContextMenuStrip(),
+                Icon = this._icon,
+                Text = this._toolTip,
+                BalloonTipText = this._toolTip,
                 Visible = true
             };
 
-            this.notifyIcon.ContextMenuStrip.Opening += this.ContextMenuStrip_Opening;
-            this.notifyIcon.DoubleClick += this.NotifyIcon_DoubleClick;
+            this._notifyIcon.ContextMenuStrip.Opening += this.ContextMenuStrip_Opening;
+            this._notifyIcon.DoubleClick += this.NotifyIcon_DoubleClick;
         }
         
         /// <summary>
@@ -190,17 +190,17 @@ namespace SaveEye
         /// </summary>
         private void InitContextMenu()
         {
-            if (this.notifyIcon != null)
+            if (this._notifyIcon != null)
             {
-                this.OpenMenuItem = new MenuItem(this.rm.GetString("Open_Button"), this.OpenClick);
-                this.EyescreenMenuItem = new MenuItem(this.rm.GetString("EyeScreen_Button"), this.EyeScreenClick);
-                this.PauseMenuItem = new MenuItem(this.rm.GetString("Pause_Button"), this.PauseClick);
-                this.ExitMenuItem = new MenuItem(this.rm.GetString("Exit_Button"), this.ExitClick);
+                this._openMenuItem = new MenuItem(this._rm.GetString("Open_Button"), this.OpenClick);
+                this._eyeScreenMenuItem = new MenuItem(this._rm.GetString("EyeScreen_Button"), this.EyeScreenClick);
+                this._pauseMenuItem = new MenuItem(this._rm.GetString("Pause_Button"), this.PauseClick);
+                this._exitMenuItem = new MenuItem(this._rm.GetString("Exit_Button"), this.ExitClick);
                 
-                this.notifyIcon.ContextMenu.MenuItems.Add(this.OpenMenuItem);
-                this.notifyIcon.ContextMenu.MenuItems.Add(this.EyescreenMenuItem);
-                this.notifyIcon.ContextMenu.MenuItems.Add(this.PauseMenuItem);
-                this.notifyIcon.ContextMenu.MenuItems.Add(this.ExitMenuItem);
+                this._notifyIcon.ContextMenu.MenuItems.Add(this._openMenuItem);
+                this._notifyIcon.ContextMenu.MenuItems.Add(this._eyeScreenMenuItem);
+                this._notifyIcon.ContextMenu.MenuItems.Add(this._pauseMenuItem);
+                this._notifyIcon.ContextMenu.MenuItems.Add(this._exitMenuItem);
             }
         }
 
@@ -211,24 +211,24 @@ namespace SaveEye
         /// <param name="e"></param>
         private void PauseClick(object sender, System.EventArgs e)
         {
-            if (this.triggerTImer.IsEnabled)
+            if (this._triggerTImer.IsEnabled)
             {
-                this.triggerTImer.IsEnabled = false;
-                this.notifyIcon.ShowBalloonTip(5, "SaveEye", this.rm.GetString("IsPaused"), ToolTipIcon.Warning);
-                this.notifyIcon.Icon = Properties.Resources.iconSmallPaused;
-                this.PauseMenuItem.Text = this.rm.GetString("Resume_Button");
-                this.notifyIcon.Text = this.rm.GetString("IsPaused");
-                this.icon = this.notifyIcon.Icon; 
+                this._triggerTImer.IsEnabled = false;
+                this._notifyIcon.ShowBalloonTip(5, "SaveEye", this._rm.GetString("IsPaused"), ToolTipIcon.Warning);
+                this._notifyIcon.Icon = Properties.Resources.iconSmallPaused;
+                this._pauseMenuItem.Text = this._rm.GetString("Resume_Button");
+                this._notifyIcon.Text = this._rm.GetString("IsPaused");
+                this._icon = this._notifyIcon.Icon; 
             }
             else
             {
-                this.triggerTImer.Interval = new TimeSpan(0,20,0); // 20 Minutes
-                this.triggerTImer.IsEnabled = true;
-                this.notifyIcon.Icon = Properties.Resources.iconSmall;
-                this.PauseMenuItem.Text = this.rm.GetString("Pause_Button");
-                this.notifyIcon.ShowBalloonTip(3, "SaveEye", this.rm.GetString("NextExecution") + DateTime.Now.AddMinutes(20).ToShortTimeString() + " Uhr", ToolTipIcon.None);
-                this.notifyIcon.Text = "SaveEye" + Environment.NewLine + this.rm.GetString("NextExecution") + DateTime.Now.AddMinutes(20).ToShortTimeString();
-                this.icon = this.notifyIcon.Icon;
+                this._triggerTImer.Interval = new TimeSpan(0,20,0); // 20 Minutes
+                this._triggerTImer.IsEnabled = true;
+                this._notifyIcon.Icon = Properties.Resources.iconSmall;
+                this._pauseMenuItem.Text = this._rm.GetString("Pause_Button");
+                this._notifyIcon.ShowBalloonTip(3, "SaveEye", this._rm.GetString("NextExecution") + DateTime.Now.AddMinutes(20).ToShortTimeString() + " Uhr", ToolTipIcon.None);
+                this._notifyIcon.Text = "SaveEye" + Environment.NewLine + this._rm.GetString("NextExecution") + DateTime.Now.AddMinutes(20).ToShortTimeString();
+                this._icon = this._notifyIcon.Icon;
             }
             
         }
@@ -246,7 +246,7 @@ namespace SaveEye
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void OpenClick(object sender, System.EventArgs e) => 
+        private void OpenClick(object sender, EventArgs e) => 
             this.Visibility = Visibility.Visible;
 
         /// <summary>
@@ -254,7 +254,7 @@ namespace SaveEye
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ExitClick(object sender, System.EventArgs e) => 
+        private void ExitClick(object sender, EventArgs e) => 
             System.Windows.Application.Current.Shutdown();
 
         /// <summary>
@@ -262,7 +262,7 @@ namespace SaveEye
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void NotifyIcon_DoubleClick(object sender, System.EventArgs e) => 
+        private void NotifyIcon_DoubleClick(object sender, EventArgs e) => 
             this.ToggleWindowVisibility();
 
         /// <summary>
@@ -270,7 +270,7 @@ namespace SaveEye
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        private void ContextMenuStrip_Opening(object sender, CancelEventArgs e)
         {
 
         }
@@ -299,7 +299,7 @@ namespace SaveEye
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void Window_Closing(object sender, CancelEventArgs e)
         {
             e.Cancel = true;
             this.Visibility = System.Windows.Visibility.Hidden;
@@ -355,12 +355,12 @@ namespace SaveEye
         /// </summary>
         /// <param name="input">The string without quotes</param>
         /// <returns>The string with quotes</returns>
-        private string Quoterize(string input)
+        private static string Quoterize(string input)
         {
             string output;
 
             // If the string already has quotes somewhere, remove them. No double, triple, quadruple (and so on) quoting possible then
-            input.Replace(@"""", "");
+            input = input.Replace(@"""", "");
             
             output = @"""" + input + @"""";
 
@@ -419,17 +419,58 @@ namespace SaveEye
         /// Get the Icon from the Resources
         /// </summary>
         /// <returns>The Icon</returns>
-        private Icon GetIconFromResource() => Properties.Resources.iconSmall;
+        private static Icon GetIconFromResource() => Properties.Resources.iconSmall;
 
         public void Dispose()
         {
-            this.OpenMenuItem.Dispose();
-            this.PauseMenuItem.Dispose();
-            this.EyescreenMenuItem.Dispose();
-            this.ExitMenuItem.Dispose();
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        ~MainWindow()
+        {
+            // Finalizer calls Dispose(false)  
+            Dispose(false);
+        }
+        // The bulk of the clean-up code is implemented in Dispose(bool)  
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                // free managed resources  
+                if (this._openMenuItem != null)
+                {
+                    this._openMenuItem.Dispose();
+                    this._openMenuItem = null;
+                }
+
+                if (this._pauseMenuItem != null)
+                {
+                    this._pauseMenuItem.Dispose();
+                    this._pauseMenuItem = null;
+                }
+
+                if (this._eyeScreenMenuItem != null)
+                {
+                    this._eyeScreenMenuItem.Dispose();
+                    this._eyeScreenMenuItem = null;
+                }
+
+                if (this._exitMenuItem != null)
+                {
+                    this._exitMenuItem.Dispose();
+                    this._exitMenuItem = null;
+                }
+            }
+
+            //// free native resources if there are any.  
+            //if (nativeResource != IntPtr.Zero)
+            //{
+            //    Marshal.FreeHGlobal(nativeResource);
+            //    nativeResource = IntPtr.Zero;
+            //}
         }
 
         #endregion
-
     }
 }
